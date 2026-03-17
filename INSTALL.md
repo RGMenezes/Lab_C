@@ -43,10 +43,10 @@ pacman -Syu
 
 Observação: em alguns casos, será necessário fechar e abrir o terminal novamente e repetir o comando.
 
-5. Instale o GCC (MinGW-w64 UCRT64):
+5. Instale o GCC e o GDB (MinGW-w64 UCRT64):
 
 ```bash
-pacman -S --needed mingw-w64-ucrt-x86_64-gcc
+pacman -S --needed mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb
 ```
 
 6. Passo crucial: adicionar o compilador ao PATH do Windows.
@@ -70,23 +70,78 @@ C:\msys64\ucrt64\bin
 ```
 
 6. Confirme em **OK** em todas as janelas.
-7. Feche e abra novamente o terminal para aplicar.
+7. Feche e abra novamente o terminal (e o VS Code) para aplicar.
+
+> **Atenção:** se o VS Code já estava aberto durante a configuração do PATH, feche-o completamente e reabra. Terminais abertos antes da mudança não herdam o novo PATH.
 
 ## 4) Extensões recomendadas no VS Code
 
 Instale as extensões abaixo:
 
 - **C/C++** (Microsoft)
-- **C/C++ Themes**
 - **Code Runner**
 
-## 5) Comandos de verificação
+## 5) Configurar o VS Code para compilar e depurar
+
+O repositório já inclui a pasta `.vscode` com dois arquivos de configuração prontos:
+
+- `.vscode/tasks.json` — compila o arquivo `.c` aberto com `gcc -g`
+- `.vscode/launch.json` — executa e depura com `gdb` (F5)
+
+Se precisar recriar esses arquivos manualmente, veja o conteúdo abaixo.
+
+### tasks.json
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "gcc: compilar arquivo atual",
+      "type": "shell",
+      "command": "gcc",
+      "args": ["-g", "${file}", "-o", "${fileDirname}\\${fileBasenameNoExtension}.exe"],
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}
+```
+
+### launch.json
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "(gdb) Rodar",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
+      "preLaunchTask": "gcc: compilar arquivo atual"
+    }
+  ]
+}
+```
+
+Para rodar um arquivo `.c`, abra-o e pressione **F5**.
+
+## 6) Comandos de verificação
 
 No terminal, execute:
 
 ```bash
 gcc --version
+gdb --version
 git --version
 ```
 
-Se ambos retornarem versão, o ambiente está pronto.
+Se todos retornarem versão, o ambiente está pronto.
