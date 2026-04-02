@@ -4,12 +4,10 @@
         {
             "label": "gcc: compilar arquivo atual",
             "type": "shell",
-            "command": "gcc",
+            "command": "cmd",
             "args": [
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "/c",
+                "taskkill /F /IM ${fileBasenameNoExtension}.exe >nul 2>&1 & gcc -g \"${file}\" -o \"${fileDirname}\\${fileBasenameNoExtension}.exe\""
             ],
             "group": {
                 "kind": "build",
@@ -22,13 +20,10 @@
         {
             "type": "cppbuild",
             "label": "C/C++: gcc.exe build active file",
-            "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+            "command": "cmd",
             "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "/c",
+                "taskkill /F /IM ${fileBasenameNoExtension}.exe >nul 2>&1 & C:\\msys64\\ucrt64\\bin\\gcc.exe -fdiagnostics-color=always -g \"${file}\" -o \"${fileDirname}\\${fileBasenameNoExtension}.exe\""
             ],
             "options": {
                 "cwd": "${fileDirname}"
